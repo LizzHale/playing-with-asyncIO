@@ -1,51 +1,26 @@
-var ProgressBar = function() {
-    this.onStartCallback = null;
-    this.onProgressCallback = null;
-    this.onEndCallback = null;
-    this.progress = 0;
-};
+var events = require('events');
 
-ProgressBar.prototype.onStart = function(callback) {
-    this.onStartCallback = callback;
-};
+var progressBar = new events.EventEmitter();
 
-ProgressBar.prototype.onProgress = function(callback) {
-    this.onProgressCallback = callback;
-};
-
-ProgressBar.prototype.onEnd = function(callback) {
-    this.onEndCallback = callback;
-};
-
-ProgressBar.prototype.start = function() {
-    if (!this.onStartCallback) {
-        return;
-    }
-    this.onStartCallback();
-};
-
-var progressBar = new ProgressBar();
-
-progressBar.onStart(function() {
+progressBar.on('start', function() {
     console.log('Start');
-    while(this.progress <= 100) {
-        if (this.progress % 10 === 0) {
-            this.onProgressCallback(this.progress);
+    for (var i = 1; i <= 100; i++) {
+        if (i % 10 === 0) {
+            progressBar.emit('progress', i);
         }
-        if (this.progress == 100) {
-            this.onEndCallback();
+        if (i === 100) {
+            progressBar.emit('end');
         }
-        this.progress++;
     }
 });
 
-progressBar.onProgress(function(current_progress) {
+progressBar.on('progress', function(current_progress) {
     console.log('Progress: ' + current_progress + '%');
 });
 
-progressBar.onEnd(function() {
+progressBar.on('end', function() {
     console.log('Finished');
 });
 
-progressBar.start();
+progressBar.emit('start');
 
