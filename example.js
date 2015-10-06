@@ -6,8 +6,8 @@ function wait(seconds, callback) {
 
 console.log('Console log before calling setTimeout:', new Date());
 
-wait(3, function() {
-    console.log('Console log inside callbackFunction:', new Date());
+wait(3, function(date) {
+    console.log('Console log inside callbackFunction:', date);
 });
 
 
