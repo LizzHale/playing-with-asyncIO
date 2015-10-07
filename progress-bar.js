@@ -1,6 +1,32 @@
-var events = require('events');
+var ProgressBar = function() {
+    this.listeners = {};
+};
 
-var progressBar = new events.EventEmitter();
+ProgressBar.prototype.on = function(eventName, listener) {
+    if (!this.listeners.hasOwnProperty(eventName)) {
+        this.listeners[eventName] = [listener];
+    }
+    else {
+        this.listeners[eventName].push(listener);
+    }
+};
+
+ProgressBar.prototype.emit = function(eventName) {
+    if (!this.listeners.hasOwnProperty(eventName)) {
+        return;
+    }
+
+    var args = [];
+    for (var i = 1; i < arguments.length; i++) {
+        args.push(arguments[i]);
+    }
+
+    this.listeners[eventName].forEach(function(listener) {
+        listener.apply(null, args);
+    });
+};
+
+var progressBar = new ProgressBar();
 
 progressBar.on('start', function() {
     console.log('Start');
